@@ -112,7 +112,7 @@ class Grille:
     
     def eq(self, grilleA, grilleB):
         """
-        return True si grilleA == grilleB (tous les points des deux matrice sont éqals), false sinon
+        retourne True si grilleA == grilleB (tous les points des deux matrice sont éqals), false sinon
         """
         return numpy.array_equal(grilleA,grilleB)
 
@@ -125,7 +125,7 @@ class Grille:
 
 #les codes pour tester les fonctions dans le ficher mainPartie1.py
 
-g0=Grille()         #la création de la grille 
+g0 = Grille()         #la création de la grille 
 g0.place_alea(g0.grille,1)
 g0.affiche(g0.grille)
 

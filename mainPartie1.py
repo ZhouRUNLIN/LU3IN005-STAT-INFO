@@ -2,42 +2,50 @@ import numpy
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
+"""
+Signification et type des paramètres：
+grille | Matrix : Zone de jeu， taille : 10*10
+bateau | int : type des bateaux
+position | (int,int) : coordonnées de la tête de bateau
+direction | int : 1 pour horizontale et 2 pour verticale
+"""
+
 class Grille:
     def __init__(self):
-        """
-        *0-9
-        Supposons que (0,0) est le point le plus haut et le plus gauche.
-        """
-        self.grille=numpy.zeros((10,10))
+        #Initialisation d'une matrice vide
+        #Numéroter la grille de gauche à droite de haut en bas, en utilisant les chiffres de 0 à 9
+        self.grille = numpy.zeros((10, 10))
 
-    def bat_longueur(self,bateau):
+    def bat_longueur(self, bateau):
+        """
+        Définir la taille de chaque type de bateau et retourne le longueur
+        """
         if bateau == 1:
-            length=5
+            length = 5
         elif bateau == 2:
-            length=4
+            length = 4
         elif bateau == 3 or bateau == 4:
-            length=3
+            length = 3
         elif bateau == 1:
-            length=2
+            length = 2
         else:
-            length=0
+            length = 0
+        
         return length
 
     def peut_placer(self, grille, bateau, position, direction):
         """
-        bateau int : type des bateaux
-        position (int,int) : position de tête(gauche ou haut)
-        direction int : 1 pour horizontale et 2 pour verticale
-
-        return True si possible, False sinon
+        retourne True si il est possible de placer la bateau et tous, False sinon
         """
-        # tester si le point de tête est dans la grille
+        
+        # tester si les coordonnées de tête sont dans la grille
         if position[0]<0 or position[0]>9 or position[1]<0 or position[1]>9:
             return False
 
         # calculer le longueur de bateau
         length = self.bat_longueur(bateau)
         if length==0:
+            print("Err : wrong ship type number !")
             return False
 
         if direction==1:
@@ -47,22 +55,22 @@ class Grille:
                        return False
                 return True
         
-        if direction==2:
+        elif direction==2:
            if position[1]+length<9:
                 for i in range(position[1], position[1]+length):
                     if self.grille[position[0]][i] != 0:
                        return False
                 return True
+        
+        print("Err : wrong direction number !")
         return False
     
     def place(self, grille, bateau, position, direction):
         """
-        bateau int : type des bateaux
-        position (int,int) : position de tête(gauche ou haut)
-        direction int : 1 pour horizontale et 2 pour verticale
-
-        return True si cette opération est validé, False sinon
+        retourne True si cette opération est valide, False sinon
         """
+        
+        #vérifier la opération est vailde à l'avance et puis on continue d'insertion de bateau
         if not self.peut_placer(grille, bateau, position, direction):
             return False
         
@@ -79,30 +87,24 @@ class Grille:
 
     def generer_position(self):
         """
-        return ((int,int),int) : (position,direction)
+        la création des coordonnées de la tête de bateau et sa direction au hasard
         """
+        
         x=numpy.random.randint(0,10)
         y=numpy.random.randint(0,10)
         d=numpy.random.randint(1,3)
+        
         return ((x,y),d)
 
     def place_alea(self, grille, bateau):
         """
-        grille int**2 : le champ de grille
-        bateau int : type des bateaux
-
-        return None
+        Effectuer une boucle jusqu'à ce que le navire soit inséré avec succès
         """
-        pos,dir=self.generer_position()
-        while not self.peut_placer(grille,bateau,pos,dir):
-            pos,dir=self.generer_position()
+        pos,dir = self.generer_position()
+        while not self.peut_placer(grille, bateau, pos, dir):
+            pos,dir = self.generer_position()
     
     def affiche(self, grille):
-        """
-        grille int**2 : le champ de grille
-
-        return None
-        """
         fig = plt.figure()
         ax2 = fig.add_subplot(122)
         ax2.imshow(grille, interpolation='nearest', cmap=cm.Greys_r)
@@ -110,21 +112,21 @@ class Grille:
     
     def eq(self, grilleA, grilleB):
         """
-        grilleA int**2 : le champ de grille
-        grilleB int**2 : le champ de grille
-
-        return True si grilleA==grilleB, false sinon
+        return True si grilleA == grilleB (tous les points des deux matrice sont éqals), false sinon
         """
         return numpy.array_equal(grilleA,grilleB)
 
     def genere_grille(self):
         """
+        Inserez 5 bateau (Un de chaque espèce) dans la grille
         """
         for i in range(1,6):
             self.place_alea(self.grille,i)
 
-g0=Grille()
-print(g0.place_alea(g0.grille,1))
+#les codes pour tester les fonctions dans le ficher mainPartie1.py
+
+g0=Grille()         #la création de la grille 
+g0.place_alea(g0.grille,1)
 g0.affiche(g0.grille)
 
 

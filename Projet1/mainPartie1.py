@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 """
-Signification et type des paramètres：
-grille | Matrix : Zone de jeu， taille : 10*10
+Signification et type des paramètres:
+grille | Matrix : Zone de jeu, taille : 10*10
 bateau | int : type des bateaux
 position | (int,int) : coordonnées de la tête de bateau
 direction | int : 1 pour horizontale et 2 pour verticale

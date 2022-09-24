@@ -26,7 +26,7 @@ class Grille:
             length = 4
         elif bateau == 3 or bateau == 4:
             length = 3
-        elif bateau == 1:
+        elif bateau == 5:
             length = 2
         else:
             length = 0
@@ -62,7 +62,7 @@ class Grille:
                        return False
                 return True
         
-        print("Err : wrong direction number !")
+        #print("Err : wrong direction number !")
         return False
     
     def place(self, grille, bateau, position, direction):
@@ -83,6 +83,7 @@ class Grille:
         if direction == 2:
             for i in range(position[1], position[1]+length):
                 self.grille[position[0]][i] = bateau
+        #print("Place success: "+str(position[0])+" "+str(position[1])+" "+str(direction)+" "+str(bateau))
         return True
 
     def generer_position(self):
@@ -103,6 +104,7 @@ class Grille:
         pos,dir = self.generer_position()
         while not self.peut_placer(grille, bateau, pos, dir):
             pos,dir = self.generer_position()
+        self.place(self.grille,bateau,pos,dir)
     
     def affiche(self, grille):
         fig = plt.figure()
@@ -126,7 +128,7 @@ class Grille:
 #les codes pour tester les fonctions dans le ficher mainPartie1.py
 
 g0 = Grille()         #la création de la grille 
-g0.place_alea(g0.grille,1)
+g0.genere_grille()
 g0.affiche(g0.grille)
 
 

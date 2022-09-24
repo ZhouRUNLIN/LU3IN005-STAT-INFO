@@ -62,7 +62,6 @@ class Grille:
                        return False
                 return True
         
-        #print("Err : wrong direction number !")
         return False
     
     def place(self, grille, bateau, position, direction):
@@ -83,7 +82,7 @@ class Grille:
         if direction == 2:
             for i in range(position[1], position[1]+length):
                 self.grille[position[0]][i] = bateau
-        #print("Place success: "+str(position[0])+" "+str(position[1])+" "+str(direction)+" "+str(bateau))
+
         return True
 
     def generer_position(self):

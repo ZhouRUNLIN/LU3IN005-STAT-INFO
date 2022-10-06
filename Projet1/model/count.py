@@ -1,6 +1,4 @@
-"""
-Partie 2
-"""
+#Partie 2 Combinatoire du jeu
 
 from model.grille import *
 

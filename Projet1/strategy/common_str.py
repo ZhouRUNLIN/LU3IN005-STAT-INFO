@@ -14,14 +14,4 @@ class Strategy:
 			return (x,y)
 		return self.generer_alea()
 	
-	def jouer(self):
-		return 0
 	
-	def affiche_stat(self,fois):
-		data=[]
-		for i in range(fois):
-			data.append(self.jouer())
-		plt.hist(data,bins=100)
-		plt.xlabel("nb steps")
-		plt.ylabel("frequency")
-		plt.savefig('./figures/alea.jpg')

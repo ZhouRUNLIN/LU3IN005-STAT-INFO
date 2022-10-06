@@ -9,5 +9,14 @@ class Alea_str(Strategy):
 		while not self.bat.victoire():
 			self.bat.joue(super().generer_alea())
 			nb+=1
-		self.bat.reset()
 		return nb
+	
+	def affiche_stat(self,fois):
+		data=[]
+		for i in range(fois):
+			self.bat.reset()
+			data.append(self.jouer())
+		plt.hist(data,bins=100)
+		plt.xlabel("nb steps")
+		plt.ylabel("frequency")
+		plt.savefig('./figures/alea.jpg')

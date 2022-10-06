@@ -1,17 +1,18 @@
+#Partie 1 Modélisation et fonctions simples
+
 import numpy
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-"""
-Partie 1
-Signification et type des paramètres:
-grille | Matrix : Zone de jeu, taille : 10*10
-bateau | int : type des bateaux
-position | (int,int) : coordonnées de la tête de bateau
-direction | int : 1 pour horizontale et 2 pour verticale
-"""
-
 class Grille:
+    """
+    Signification et type des paramètres:
+        grille | Matrix : Zone de jeu, taille : 10*10
+        bateau | int : type des bateaux
+        position | (int,int) : coordonnées de la tête de bateau
+        direction | int : 1 pour horizontale et 2 pour verticale
+    """
+    
     def __init__(self):
         #Initialisation d'une matrice vide
         #Numéroter la grille de gauche à droite de haut en bas, en utilisant les chiffres de 0 à 9

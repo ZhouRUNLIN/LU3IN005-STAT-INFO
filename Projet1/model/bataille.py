@@ -15,10 +15,8 @@ class Bataille:
 		tenter de toucher un bateau, si réussit le compteur se augment à 1
 		"""
 		self.record[position[0]][position[1]]=1
-		print(self.record)
 		if self.g1.grille[position[0]][position[1]]!=0:
 			self.count+=1
-			print(position)
 			return 1
 		return 0
 	

@@ -7,4 +7,4 @@ from strategy import *
 
 heur=Heur_str()
 print(heur.jouer())
-print(heur.bat.g1.grille)
+heur.affiche_stat(1000)

@@ -12,7 +12,6 @@ class Heur_str(Strategy):
 			nb+=1
 			if p==1:
 				nb+=self.snipe(pos)
-		self.bat.reset()
 		return nb
 	
 	def snipe(self,position):
@@ -31,6 +30,15 @@ class Heur_str(Strategy):
 			return 0
 		p=self.bat.joue(pos)
 		if p==1:
-			self.bat.count+=1
 			return self.snipe_dir(pos,direction)+1
 		return 1
+	
+	def affiche_stat(self,fois):
+		data=[]
+		for i in range(fois):
+			self.bat.reset()
+			data.append(self.jouer())
+		plt.hist(data,bins=100)
+		plt.xlabel("nb steps")
+		plt.ylabel("frequency")
+		plt.savefig('./figures/heur.jpg')

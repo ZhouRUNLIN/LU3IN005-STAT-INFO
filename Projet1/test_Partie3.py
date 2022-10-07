@@ -5,6 +5,10 @@ from strategy import *
 #print(alea.jouer())
 #alea.affiche_stat(1000)
 
-heur=Heur_str()
-print(heur.jouer())
-heur.affiche_stat(1000)
+#heur=Heur_str()
+#print(heur.jouer())
+#heur.affiche_stat(1000)
+
+#prob=Prob_str()
+#print(prob.jouer())
+#prob.affiche_stat(100)

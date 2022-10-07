@@ -86,6 +86,27 @@ class Grille:
                 self.grille[position[0]][i] = bateau
 
         return True
+    
+    def place_1(self, grille, bateau, position, direction):
+        """
+        retourne True si cette opération est valide, False sinon
+        """
+        
+        #vérifier la opération est vailde à l'avance et puis on continue d'insertion de bateau
+        if not Grille.peut_placer(grille, bateau, position, direction):
+            return False
+        
+        length = Grille.bat_longueur(bateau)
+        
+        if direction == 1:
+            for i in range(position[0], position[0]+length):
+                self.grille[i][position[1]] = 1
+                
+        if direction == 2:
+            for i in range(position[1], position[1]+length):
+                self.grille[position[0]][i] = 1
+                
+        return True
 
     def generer_position(self):
         """
@@ -126,3 +147,22 @@ class Grille:
         for i in range(1,6):
             self.place_alea(self.grille,i)
 
+    def genere_grille_list(self,bateaux):
+        """
+        Inserer les bateaux dans une liste
+        """
+        for i in bateaux:
+            self.place_alea(self.grille,i)
+    
+    def place_alea_restricted(self, grille, bateau, max):
+        """
+        Effectuer une boucle jusqu'à ce que le navire soit inséré avec succès
+        """
+        pos,dir = self.generer_position()
+        while max>0 and not Grille.peut_placer(grille, bateau, pos, dir):
+            pos,dir = self.generer_position()
+            max-=1
+        if max==0:
+            return 0
+        self.place_1(self.grille,bateau,pos,dir)
+        return 1

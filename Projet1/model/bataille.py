@@ -8,6 +8,7 @@ class Bataille:
 		self.g1=Grille()
 		self.g1.genere_grille()			 	#une matrice pour stocker les coordonnées des bateaux
 		self.record = numpy.zeros((10, 10)) 		#une nouvelle matrice pour stocker les point touchée
+		self.toucher_cible = numpy.zeros((10, 10))  #Une matrice de cibles touchées
 		self.count=0 					#le compteur pour entregister le nombre d'action qui touche le bateaux
 		
 	def joue(self, position):
@@ -17,6 +18,7 @@ class Bataille:
 		self.record[position[0]][position[1]]=1
 		if self.g1.grille[position[0]][position[1]]!=0:
 			self.count+=1
+			self.toucher_cible[position[0]][position[1]]=1
 			return 1
 		return 0
 	

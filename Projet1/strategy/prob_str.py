@@ -44,24 +44,27 @@ class Prob_str(Strategy):
 		plt.savefig('./figures/prob.jpg')
 		
 	def prop_position(self):
-		prop_mat=np.zeros((10,10))
+		prop_mat=numpy.zeros((10,10))
 		for ships in self.bat.ships_remain():
-			s=[]
+			s=[numpy.zeros((10,10))]
 			for attempt in range(100):
-				pos_mat=np.zeros((10,10))
+				pos_mat=numpy.zeros((10,10))
 				pos=super().generer_alea()
-				dir=np.random.randint(2)+1
-				if Grille.peut_placer(self.bat.record,ships,pos,dir):
+				dir=numpy.random.randint(2)+1
+				if Grille.peut_placer(self.bat.record*(1-self.bat.toucher_cible),ships,pos,dir):
 					length = Grille.bat_longueur(ships)
 					if dir == 1:
 						for i in range(pos[0], pos[0]+length):
 							pos_mat[i][pos[1]] = 1
 					if dir == 2:
 						for i in range(pos[1], pos[1]+length):
-							pos_mat[pos[0]][i] = bateau
-				if pos_mat not in s:
+							pos_mat[pos[0]][i] = 1
+				if not any([Grille.eq(m,pos_mat) for m in s]):
 					s.append(pos_mat)
-			for mat_temp in s:
-				prop_mat+=s
-		return np.unravel_index(np.argmax(prop_mat),prop_mat.shape)
+			for mat_temp2 in s:
+				prop_mat+=mat_temp2
+		prop_mat*=1-self.bat.toucher_cible
+		if Grille.eq(prop_mat,numpy.zeros((10,10))):
+			return super().generer_alea()
+		return numpy.unravel_index(numpy.argmax(prop_mat),prop_mat.shape)
 		

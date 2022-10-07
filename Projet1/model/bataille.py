@@ -35,3 +35,15 @@ class Bataille:
 		"""
 		self.__init__()
 		
+	def ships_remain(self):
+		"""
+		Renvoie le numéro de navire survivant
+		"""
+		l=[]
+		s=(1-self.record)*self.g1.grille
+		for i in range(1,6):
+			if i in s:
+				l.append(i)
+		return l
+		
+		

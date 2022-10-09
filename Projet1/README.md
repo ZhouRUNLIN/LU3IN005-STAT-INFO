@@ -1,3 +1,7 @@
-Présentation du répertoire:
-La répertoire a 5 fichers. 4 d'entre eux sont nommés sous la forme de Partie_num.py, les codes de fonctions sont enregistées entre eux. 
-La création de fichier "test.py" est utilisée pour vérifier la correction des fonctions.
+Présentation du répertoire :
+
+Les codes sont stockés dans des sous-dossiers, au nombre de quatre.
+Tous les fichiers commençant par test-- sont utilisés pour vérifier la fiabilité du programme pour chaque partie du projet.
+Le sous-dossier “figure” sont destinés aux graphiques requis dans le rapport，qui est le résultat de notre analyse des données expérimentales.
+
+Une description plus détaillée de chaque document et de son rôle sera présentée dans le rapport.

@@ -13,10 +13,13 @@ class Alea_str(Strategy):
 	
 	def affiche_stat(self,fois):
 		data=[]
+		esp=0.0
 		for i in range(fois):
 			self.bat.reset()
 			data.append(self.jouer())
+			esp+=data[-1]
 		plt.hist(data,bins=100)
 		plt.xlabel("nb steps")
 		plt.ylabel("frequency")
+		plt.title("esperiance : "+str(esp/fois))
 		plt.savefig('./figures/alea.jpg')

@@ -1,6 +1,6 @@
 from model import *
 from strategy import *
 
-mont=Mont_str()
+mont=Prob_str()
 print(mont.jouer())
-#mont.affiche_stat(100)
+mont.affiche_stat(100)

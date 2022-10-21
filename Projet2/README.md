@@ -7,3 +7,6 @@ week 24/10 Question 3.3-3.4
 week 31/10 Question 3.5-3.6
 week 5/11 Question 3.7-3.8
 week 12/10 Question Commentaire 
+
+A faire:
+1.找老师要邮箱

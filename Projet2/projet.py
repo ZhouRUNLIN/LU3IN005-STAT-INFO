@@ -53,7 +53,7 @@ def P2D_l(df,attr):
     
 #pour Question 3a
 def P2D_p(df,attr):
-     """
+    """
     Calcule dans le dataframe(df) la probabilité P(target|attr) sous la forme:
         un dictionnaire asssociant à la valeur 't';
         un dictionnaire associant à la valeur 'a', la probabilité de P(target=t|attr=a) 
@@ -107,6 +107,39 @@ def nbParamsIndep(df,lAttr=None):
     for attr in lAttr:
         nb+=df.groupby(attr).size().count()
     return nb*8
+
+#pour Question 5.3.1
+def drawNaiveBayes(df,attr):
+    """
+        retourne le graphe du model Naive Bayes a partir 
+    d'un dataframe et du nom de la colonne qui est la classe
+    """
+    str0=""
+    for attr0 in list(df.columns):
+        if attr0!=attr:
+            str0+=attr+"->"+attr0+";"
+    str0=str0[0:-1]
+    return utils.drawGraph(str0)
+
+#pour Question 5.3.2
+def nbParamsNaiveBayes(df,attr,lAttr=None):
+    """
+        retourne la taille mémoire d'une table (df)
+    en supposant qu'un float est représenté sur 8octets 
+    et en utilisant l'hypothèse du Naive Bayes.
+    """
+    nb=0
+    if lAttr==None:
+        lAttr=list(df.columns)
+    for attr0 in lAttr:
+        nb+=df.groupby(attr0).size().count()
+    nb=nb*df.groupby(attr).size().count()*8
+    if nb==0:
+        nb=df.groupby(attr).size().count()*8
+    else:
+        nb-=df.groupby(attr).size().count()*8
+    print(nb)
+    return nb
 
 #pour Question 2
 class APrioriClassifier(utils.AbstractClassifier):

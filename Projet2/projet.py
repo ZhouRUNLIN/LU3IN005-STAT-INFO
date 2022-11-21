@@ -271,7 +271,6 @@ class MAP2DClassifier(APrioriClassifier):
     return {"VP":VP,"VN":VN,"FP":FP,"FN":FN,"Précision":VP/(VP+FP),"rappel":VP/(VP+FN)}
 
 #pour Question 5.4 classifier naive bayes
-from functools import reduce
 class MLNaiveBayesClassifier(APrioriClassifier):
 
     def __init__(self,df,attr='target'):
@@ -306,6 +305,11 @@ class MLNaiveBayesClassifier(APrioriClassifier):
         for label_value in self.label:
             self.label_side[label_value] = (sum(self.y_df == label_value) + self._lambda)/\
                                         (self.row + len(self.label) * self._lambda)
+    def reduce(self, df):
+        res = 1
+        for x in df:
+            res *= x
+        return res
 
     def estimProbas(self, attrs):
         max_proba = 0
@@ -320,7 +324,7 @@ class MLNaiveBayesClassifier(APrioriClassifier):
                         feature_prob.append(prob_value)
                 count += 1
             
-            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob = self.reduce(feature_prob)
             #posterior_prob *= self.label_side[label_key]
             res_probe_dict[label_key] = posterior_prob
             if posterior_prob > max_proba:
@@ -341,7 +345,7 @@ class MLNaiveBayesClassifier(APrioriClassifier):
                     if prob_key == x_list[count]:
                         feature_prob.append(prob_value)
                 count += 1
-            prior_prob = reduce(lambda x, y:x * y, feature_prob)
+            prior_prob = self.reduce(feature_prob)
             #prior_prob *= self.label_side[label_key]
             if prior_prob > max_proba:
                 max_proba = prior_prob
@@ -379,7 +383,6 @@ class MLNaiveBayesClassifier(APrioriClassifier):
             
         return {"VP":VP,"VN":VN,"FP":FP,"FN":FN,"Précision":VP/(VP+FP),"rappel":VP/(VP+FN)}
 
-from functools import reduce
 class MAPNaiveBayesClassifier(APrioriClassifier):
 
     def __init__(self,df,attr='target'):
@@ -415,6 +418,12 @@ class MAPNaiveBayesClassifier(APrioriClassifier):
             self.label_side[label_value] = (sum(self.y_df == label_value) + self._lambda)/\
                                         (self.row + len(self.label) * self._lambda)
 
+    def reduce(self, df):
+        res = 1
+        for x in df:
+            res *= x
+        return res
+
     def estimProbas(self, attrs):
         max_proba = 0
         res_probe_dict = {}
@@ -428,7 +437,7 @@ class MAPNaiveBayesClassifier(APrioriClassifier):
                         feature_prob.append(prob_value)
                 count += 1
             
-            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob = self.reduce(feature_prob)       
             posterior_prob *= self.label_side[label_key]
             res_probe_dict[label_key] = posterior_prob
             if posterior_prob > max_proba:
@@ -450,7 +459,7 @@ class MAPNaiveBayesClassifier(APrioriClassifier):
                         feature_prob.append(prob_value)
                 count += 1
             
-            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob = self.reduce(feature_prob)
             posterior_prob *= self.label_side[label_key]
             if posterior_prob > max_proba:
                 max_proba = posterior_prob
@@ -488,13 +497,12 @@ class MAPNaiveBayesClassifier(APrioriClassifier):
             
         return {"VP":VP,"VN":VN,"FP":FP,"FN":FN,"Précision":VP/(VP+FP),"rappel":VP/(VP+FN)}
 
+from scipy.stats import chi2_contingency
 #pour Question 6 : feature selection dans le cadre du classifier naive bayes
-
-from scipy import stats 
 def isIndepFromTarget(df, attr, x):
     table_sp = pd.crosstab(df[attr], df['target'])
-    observed = stats.chi2_contingency(np.array(table_sp))
-    chi2, p, dof, ex = stats.chi2_contingency(table_sp, correction=False)
+    observed = chi2_contingency(np.array(table_sp))
+    chi2, p, dof, ex = chi2_contingency(table_sp, correction=False)
     if p > x:
         return True
     return False
@@ -524,6 +532,11 @@ class ReducedMLNaiveBayesClassifier(APrioriClassifier):
         for label_value in self.label:
             self.label_side[label_value] = (sum(self.y_df == label_value) + self._lambda)/\
                                         (self.row + len(self.label) * self._lambda)
+    def reduce(self, df):
+        res = 1
+        for x in df:
+            res *= x
+        return res
 
     def estimProbas(self, attrs):
         for rn in self.reduce_node:
@@ -541,7 +554,7 @@ class ReducedMLNaiveBayesClassifier(APrioriClassifier):
                         feature_prob.append(prob_value)
                 count += 1
             
-            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob = self.reduce(feature_prob)
             #posterior_prob *= self.label_side[label_key]
             res_probe_dict[label_key] = posterior_prob
             if posterior_prob > max_proba:
@@ -566,7 +579,7 @@ class ReducedMLNaiveBayesClassifier(APrioriClassifier):
                         feature_prob.append(prob_value)
                 count += 1
             
-            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob = self.reduce(feature_prob)
             #posterior_prob *= self.label_side[label_key]
             if posterior_prob > max_proba:
                 max_proba = posterior_prob
@@ -656,6 +669,12 @@ class ReducedMAPNaiveBayesClassifier(APrioriClassifier):
             self.label_side[label_value] = (sum(self.y_df == label_value) + self._lambda)/\
                                         (self.row + len(self.label) * self._lambda)
 
+    def reduce(self, df):
+        res = 1
+        for x in df:
+            res *= x
+        return res
+        
     def estimProbas(self, attrs):
         for rn in self.reduce_node:
             del attrs[rn]
@@ -672,7 +691,7 @@ class ReducedMAPNaiveBayesClassifier(APrioriClassifier):
                         feature_prob.append(prob_value)
                 count += 1
             
-            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob = self.reduce(feature_prob)
             posterior_prob *= self.label_side[label_key]
             res_probe_dict[label_key] = posterior_prob
             if posterior_prob > max_proba:
@@ -697,7 +716,7 @@ class ReducedMAPNaiveBayesClassifier(APrioriClassifier):
                         feature_prob.append(prob_value)
                 count += 1
             
-            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob = self.reduce(feature_prob)
             posterior_prob *= self.label_side[label_key]
             if posterior_prob > max_proba:
                 max_proba = posterior_prob

@@ -270,6 +270,493 @@ class MAP2DClassifier(APrioriClassifier):
             
     return {"VP":VP,"VN":VN,"FP":FP,"FN":FN,"Précision":VP/(VP+FP),"rappel":VP/(VP+FN)}
 
+#pour Question 5.4 classifier naive bayes
+from functools import reduce
+class MLNaiveBayesClassifier(APrioriClassifier):
 
+    def __init__(self,df,attr='target'):
+        self.df=df
+        self.attr=attr
+        self.dictAttr=P2D_p(df,attr)
 
+        self.x_df = df.iloc[:, 0:-1]
+        self.y_df = df.iloc[:, -1]
+        self.label = set(self.y_df)
+        self.col = len(self.x_df.columns)
+        self.row = len(self.x_df)
+        self.label_proba = {}
+        self.label_side = {}
+        self._lambda = 0.01
 
+        self.fit()
+
+    def fit(self):
+        for y_label in self.label:
+            feature_dict = {}
+            for col in range(self.col):
+                sub_feature_dict = {}
+                for feature in set(self.df.iloc[:, col]):
+                    filter_temp = self.df[self.df.iloc[:, -1] == y_label]
+                    proba = (sum(filter_temp.iloc[:,col] == feature) + self._lambda) /\
+                        (len(filter_temp)+len(set(self.df.iloc[:,col])))
+                    sub_feature_dict[feature] = proba
+                feature_dict[self.x_df.columns[col]] = sub_feature_dict
+            self.label_proba[y_label] = feature_dict
+        
+        for label_value in self.label:
+            self.label_side[label_value] = (sum(self.y_df == label_value) + self._lambda)/\
+                                        (self.row + len(self.label) * self._lambda)
+
+    def estimProbas(self, attrs):
+        max_proba = 0
+        res_probe_dict = {}
+        x_list = list(attrs.values())[:-1]
+        for label_key, label_value in self.label_proba.items():
+            feature_prob = []
+            count = 0
+            for feature_key, feature_value in label_value.items():
+                for prob_key, prob_value in feature_value.items():
+                    if prob_key == x_list[count]:
+                        feature_prob.append(prob_value)
+                count += 1
+            
+            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            #posterior_prob *= self.label_side[label_key]
+            res_probe_dict[label_key] = posterior_prob
+            if posterior_prob > max_proba:
+                max_proba = posterior_prob
+                res_y = label_key
+
+        return res_probe_dict
+
+    def estimClass(self, attrs):
+        max_proba = 0
+        res_y = 0
+        x_list = list(attrs.values())[:-1]
+        for label_key, label_value in self.label_proba.items():
+            feature_prob = []
+            count = 0
+            for feature_key, feature_value in label_value.items():
+                for prob_key, prob_value in feature_value.items():
+                    if prob_key == x_list[count]:
+                        feature_prob.append(prob_value)
+                count += 1
+            prior_prob = reduce(lambda x, y:x * y, feature_prob)
+            #prior_prob *= self.label_side[label_key]
+            if prior_prob > max_proba:
+                max_proba = prior_prob
+                res_y = label_key
+        return res_y
+
+    def statsOnDF(self, df):
+
+        """
+        à partir d'un pandas.dataframe, calcule les taux d'erreurs de classification et rend un dictionnaire.
+
+        Entrée 'df': un dataframe à tester
+        Sortie : un dictionnaire incluant la valeur de VP, FP, VN, FN, précision et rappel
+        """
+    
+        #Initialisation des variables
+        VP=0
+        VN=0
+        FP=0
+        FN=0
+        
+        for i in range(df.count()["target"]):
+            #calculer la valeur des variables
+            dictI = utils.getNthDict(df,i)
+            tar = dictI["target"]
+            pre = self.estimClass(dictI)
+            if tar==1 and pre==1:
+                VP += 1
+            if tar==0 and pre==0:
+                VN += 1
+            if tar==0 and pre==1:
+                FP += 1
+            if tar==1 and pre==0:
+                FN += 1
+            
+        return {"VP":VP,"VN":VN,"FP":FP,"FN":FN,"Précision":VP/(VP+FP),"rappel":VP/(VP+FN)}
+
+from functools import reduce
+class MAPNaiveBayesClassifier(APrioriClassifier):
+
+    def __init__(self,df,attr='target'):
+        self.df=df
+        self.attr=attr
+        self.dictAttr=P2D_p(df,attr)
+
+        self.x_df = df.iloc[:, 0:-1]
+        self.y_df = df.iloc[:, -1]
+        self.label = set(self.y_df)
+        self.col = len(self.x_df.columns)
+        self.row = len(self.x_df)
+        self.label_proba = {}
+        self.label_side = {}
+        self._lambda = 0.01
+
+        self.fit()
+
+    def fit(self):
+        for y_label in self.label:
+            feature_dict = {}
+            for col in range(self.col):
+                sub_feature_dict = {}
+                for feature in set(self.df.iloc[:, col]):
+                    filter_temp = self.df[self.df.iloc[:, -1] == y_label]
+                    proba = (sum(filter_temp.iloc[:,col] == feature) + self._lambda) /\
+                        (len(filter_temp)+len(set(self.df.iloc[:,col])))
+                    sub_feature_dict[feature] = proba
+                feature_dict[self.x_df.columns[col]] = sub_feature_dict
+            self.label_proba[y_label] = feature_dict
+        
+        for label_value in self.label:
+            self.label_side[label_value] = (sum(self.y_df == label_value) + self._lambda)/\
+                                        (self.row + len(self.label) * self._lambda)
+
+    def estimProbas(self, attrs):
+        max_proba = 0
+        res_probe_dict = {}
+        x_list = list(attrs.values())[:-1]
+        for label_key, label_value in self.label_proba.items():
+            feature_prob = []
+            count = 0
+            for feature_key, feature_value in label_value.items():
+                for prob_key, prob_value in feature_value.items():
+                    if prob_key == x_list[count]:
+                        feature_prob.append(prob_value)
+                count += 1
+            
+            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob *= self.label_side[label_key]
+            res_probe_dict[label_key] = posterior_prob
+            if posterior_prob > max_proba:
+                max_proba = posterior_prob
+                res_y = label_key
+
+        return res_probe_dict
+
+    def estimClass(self, attrs):
+        max_proba = 0
+        res_y = 0
+        x_list = list(attrs.values())[:-1]
+        for label_key, label_value in self.label_proba.items():
+            feature_prob = []
+            count = 0
+            for feature_key, feature_value in label_value.items():
+                for prob_key, prob_value in feature_value.items():
+                    if prob_key == x_list[count]:
+                        feature_prob.append(prob_value)
+                count += 1
+            
+            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob *= self.label_side[label_key]
+            if posterior_prob > max_proba:
+                max_proba = posterior_prob
+                res_y = label_key
+        return res_y
+
+    def statsOnDF(self, df):
+
+        """
+        à partir d'un pandas.dataframe, calcule les taux d'erreurs de classification et rend un dictionnaire.
+
+        Entrée 'df': un dataframe à tester
+        Sortie : un dictionnaire incluant la valeur de VP, FP, VN, FN, précision et rappel
+        """
+    
+        #Initialisation des variables
+        VP=0
+        VN=0
+        FP=0
+        FN=0
+        
+        for i in range(df.count()["target"]):
+            #calculer la valeur des variables
+            dictI = utils.getNthDict(df,i)
+            tar = dictI["target"]
+            pre = self.estimClass(dictI)
+            if tar==1 and pre==1:
+                VP += 1
+            if tar==0 and pre==0:
+                VN += 1
+            if tar==0 and pre==1:
+                FP += 1
+            if tar==1 and pre==0:
+                FN += 1
+            
+        return {"VP":VP,"VN":VN,"FP":FP,"FN":FN,"Précision":VP/(VP+FP),"rappel":VP/(VP+FN)}
+
+#pour Question 6 : feature selection dans le cadre du classifier naive bayes
+
+from scipy import stats 
+def isIndepFromTarget(df, attr, x):
+    table_sp = pd.crosstab(df[attr], df['target'])
+    observed = stats.chi2_contingency(np.array(table_sp))
+    chi2, p, dof, ex = stats.chi2_contingency(table_sp, correction=False)
+    if p > x:
+        return True
+    return False
+
+class ReducedMLNaiveBayesClassifier(APrioriClassifier):
+
+    def __init__(self, df, param, attr='target'):
+        self.df=df
+        self.attr=attr
+        self.dictAttr=P2D_p(df,attr)
+        self.param = param
+        self.reduce_node = []
+
+    def fit(self):
+        for y_label in self.label:
+            feature_dict = {}
+            for col in range(self.col):
+                sub_feature_dict = {}
+                for feature in set(self.df.iloc[:, col]):
+                    filter_temp = self.df[self.df.iloc[:, -1] == y_label]
+                    proba = (sum(filter_temp.iloc[:,col] == feature) + self._lambda) /\
+                        (len(filter_temp)+len(set(self.df.iloc[:,col])))
+                    sub_feature_dict[feature] = proba
+                feature_dict[self.x_df.columns[col]] = sub_feature_dict
+            self.label_proba[y_label] = feature_dict
+        
+        for label_value in self.label:
+            self.label_side[label_value] = (sum(self.y_df == label_value) + self._lambda)/\
+                                        (self.row + len(self.label) * self._lambda)
+
+    def estimProbas(self, attrs):
+        for rn in self.reduce_node:
+            del attrs[rn]
+
+        max_proba = 0
+        res_probe_dict = {}
+        x_list = list(attrs.values())[:-1]
+        for label_key, label_value in self.label_proba.items():
+            feature_prob = []
+            count = 0
+            for feature_key, feature_value in label_value.items():
+                for prob_key, prob_value in feature_value.items():
+                    if prob_key == x_list[count]:
+                        feature_prob.append(prob_value)
+                count += 1
+            
+            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            #posterior_prob *= self.label_side[label_key]
+            res_probe_dict[label_key] = posterior_prob
+            if posterior_prob > max_proba:
+                max_proba = posterior_prob
+                res_y = label_key
+
+        return res_probe_dict
+
+    def estimClass(self, attrs):
+        for rn in self.reduce_node:
+            del attrs[rn]
+
+        max_proba = 0
+        res_y = 0
+        x_list = list(attrs.values())[:-1]
+        for label_key, label_value in self.label_proba.items():
+            feature_prob = []
+            count = 0
+            for feature_key, feature_value in label_value.items():
+                for prob_key, prob_value in feature_value.items():
+                    if prob_key == x_list[count]:
+                        feature_prob.append(prob_value)
+                count += 1
+            
+            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            #posterior_prob *= self.label_side[label_key]
+            if posterior_prob > max_proba:
+                max_proba = posterior_prob
+                res_y = label_key
+        return res_y
+    
+    def statsOnDF(self, df):
+
+        """
+        à partir d'un pandas.dataframe, calcule les taux d'erreurs de classification et rend un dictionnaire.
+
+        Entrée 'df': un dataframe à tester
+        Sortie : un dictionnaire incluant la valeur de VP, FP, VN, FN, précision et rappel
+        """
+    
+        #Initialisation des variables
+        VP=0
+        VN=0
+        FP=0
+        FN=0
+        
+        for i in range(df.count()["target"]):
+            #calculer la valeur des variables
+            dictI = utils.getNthDict(df,i)
+            tar = dictI["target"]
+            pre = self.estimClass(dictI)
+            if tar==1 and pre==1:
+                VP += 1
+            if tar==0 and pre==0:
+                VN += 1
+            if tar==0 and pre==1:
+                FP += 1
+            if tar==1 and pre==0:
+                FN += 1
+    
+        return {"VP":VP,"VN":VN,"FP":FP,"FN":FN,"Précision":VP/(VP+FP),"rappel":VP/(VP+FN)}
+
+    def draw(self):
+        """
+            retourne le graphe du model Naive Bayes a partir 
+        d'un dataframe et du nom de la colonne qui est la classe
+        """
+        str0=""
+        for attr0 in list(self.df.columns):
+            if isIndepFromTarget(self.df, attr0, self.param):
+                self.reduce_node.append(attr0)
+                continue
+            if attr0!=self.attr:
+                str0+=self.attr+"->"+attr0+";"
+        str0=str0[0:-1]
+        
+        self.df = self.df.drop(columns=self.reduce_node)
+        self.x_df = self.df.iloc[:, 0:-1]
+        self.y_df = self.df.iloc[:, -1]
+        self.label = set(self.y_df)
+        self.col = len(self.x_df.columns)
+        self.row = len(self.x_df)
+        self.label_proba = {}
+        self.label_side = {}
+        self._lambda = 0.01
+        self.fit()
+        return utils.drawGraph(str0)
+
+class ReducedMAPNaiveBayesClassifier(APrioriClassifier):
+
+    def __init__(self, df, param, attr='target'):
+        self.df=df
+        self.attr=attr
+        self.dictAttr=P2D_p(df,attr)
+        self.param = param
+        self.reduce_node = []
+
+    def fit(self):
+        for y_label in self.label:
+            feature_dict = {}
+            for col in range(self.col):
+                sub_feature_dict = {}
+                for feature in set(self.df.iloc[:, col]):
+                    filter_temp = self.df[self.df.iloc[:, -1] == y_label]
+                    proba = (sum(filter_temp.iloc[:,col] == feature) + self._lambda) /\
+                        (len(filter_temp)+len(set(self.df.iloc[:,col])))
+                    sub_feature_dict[feature] = proba
+                feature_dict[self.x_df.columns[col]] = sub_feature_dict
+            self.label_proba[y_label] = feature_dict
+        
+        for label_value in self.label:
+            self.label_side[label_value] = (sum(self.y_df == label_value) + self._lambda)/\
+                                        (self.row + len(self.label) * self._lambda)
+
+    def estimProbas(self, attrs):
+        for rn in self.reduce_node:
+            del attrs[rn]
+
+        max_proba = 0
+        res_probe_dict = {}
+        x_list = list(attrs.values())[:-1]
+        for label_key, label_value in self.label_proba.items():
+            feature_prob = []
+            count = 0
+            for feature_key, feature_value in label_value.items():
+                for prob_key, prob_value in feature_value.items():
+                    if prob_key == x_list[count]:
+                        feature_prob.append(prob_value)
+                count += 1
+            
+            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob *= self.label_side[label_key]
+            res_probe_dict[label_key] = posterior_prob
+            if posterior_prob > max_proba:
+                max_proba = posterior_prob
+                res_y = label_key
+
+        return res_probe_dict
+
+    def estimClass(self, attrs):
+        for rn in self.reduce_node:
+            del attrs[rn]
+
+        max_proba = 0
+        res_y = 0
+        x_list = list(attrs.values())[:-1]
+        for label_key, label_value in self.label_proba.items():
+            feature_prob = []
+            count = 0
+            for feature_key, feature_value in label_value.items():
+                for prob_key, prob_value in feature_value.items():
+                    if prob_key == x_list[count]:
+                        feature_prob.append(prob_value)
+                count += 1
+            
+            posterior_prob = reduce(lambda x, y:x * y, feature_prob)
+            posterior_prob *= self.label_side[label_key]
+            if posterior_prob > max_proba:
+                max_proba = posterior_prob
+                res_y = label_key
+        return res_y
+    
+    def statsOnDF(self, df):
+
+        """
+        à partir d'un pandas.dataframe, calcule les taux d'erreurs de classification et rend un dictionnaire.
+
+        Entrée 'df': un dataframe à tester
+        Sortie : un dictionnaire incluant la valeur de VP, FP, VN, FN, précision et rappel
+        """
+    
+        #Initialisation des variables
+        VP=0
+        VN=0
+        FP=0
+        FN=0
+        
+        for i in range(df.count()["target"]):
+            #calculer la valeur des variables
+            dictI = utils.getNthDict(df,i)
+            tar = dictI["target"]
+            pre = self.estimClass(dictI)
+            if tar==1 and pre==1:
+                VP += 1
+            if tar==0 and pre==0:
+                VN += 1
+            if tar==0 and pre==1:
+                FP += 1
+            if tar==1 and pre==0:
+                FN += 1
+    
+        return {"VP":VP,"VN":VN,"FP":FP,"FN":FN,"Précision":VP/(VP+FP),"rappel":VP/(VP+FN)}
+
+    def draw(self):
+        """
+            retourne le graphe du model Naive Bayes a partir 
+        d'un dataframe et du nom de la colonne qui est la classe
+        """
+        str0=""
+        for attr0 in list(self.df.columns):
+            if isIndepFromTarget(self.df, attr0, self.param):
+                self.reduce_node.append(attr0)
+                continue
+            if attr0!=self.attr:
+                str0+=self.attr+"->"+attr0+";"
+        str0=str0[0:-1]
+        
+        self.df = self.df.drop(columns=self.reduce_node)
+        self.x_df = self.df.iloc[:, 0:-1]
+        self.y_df = self.df.iloc[:, -1]
+        self.label = set(self.y_df)
+        self.col = len(self.x_df.columns)
+        self.row = len(self.x_df)
+        self.label_proba = {}
+        self.label_side = {}
+        self._lambda = 0.01
+        self.fit()
+        return utils.drawGraph(str0)

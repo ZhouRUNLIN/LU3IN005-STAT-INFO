@@ -141,6 +141,24 @@ def nbParamsNaiveBayes(df,attr,lAttr=None):
     print(nb)
     return nb
 
+import matplotlib.pyplot as plt
+#pour Question 7.2
+def mapClassifiers(dic,df):
+    """
+    """
+    lP=[]
+    lR=[]
+    for key in dic:
+        c=dic[key]
+        p=c.statsOnDF(df)["Précision"]
+        r=c.statsOnDF(df)["rappel"]
+        lP.append(p)
+        lR.append(r)
+        plt.text(p,r,key)
+    plt.scatter(lP,lR)
+    plt.show()
+        
+
 #pour Question 2
 class APrioriClassifier(utils.AbstractClassifier):
   def __init__(self):

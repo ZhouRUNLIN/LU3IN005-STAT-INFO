@@ -150,6 +150,8 @@ def mapClassifiers(dic,df):
     lR=[]
     for key in dic:
         c=dic[key]
+        if key in ["6","7"]:
+            c.draw()
         p=c.statsOnDF(df)["Précision"]
         r=c.statsOnDF(df)["rappel"]
         lP.append(p)
